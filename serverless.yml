@@ -1,0 +1,32 @@
+service: aws-ratting-serverless
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+plugins:
+  - serverless-offline
+  - serverless-lift
+	
+constructs:
+  rate-calculator-queue:
+    type: queue
+    worker:
+      handler: src/functions/rateMediaCalculator.handler
+
+functions:
+  rateProduct:
+    handler: src/functions/rateProduct.handler
+    environment:
+      QUEUE_URL: ${construct:rate-calculator-queue.queueUrl}
+    events:
+      - httpApi:
+          path: /rate
+          method: post
+  getRateProductMedia:
+    handler: src/functions/getRateProductMedia.handler
+    events:
+      - httpApi:
+          path: /rate
+          method: get
