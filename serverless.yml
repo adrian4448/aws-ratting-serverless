@@ -9,23 +9,57 @@ plugins:
   - serverless-offline
   - serverless-lift
 	
+resources:
+  Resources:
+    rateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: rateTable
+        AttributeDefinitions:
+          - AttributeName: productName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: productName
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    rateMediaTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: rateMediaTable
+        AttributeDefinitions:
+          - AttributeName: productName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: productName
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
 constructs:
   rate-calculator-queue:
     type: queue
     worker:
       handler: src/functions/rateMediaCalculator.handler
+      environment:
+        RATE_MEDIA_TABLE_NAME: rateMediaTable
 
 functions:
   rateProduct:
     handler: src/functions/rateProduct.handler
     environment:
       QUEUE_URL: ${construct:rate-calculator-queue.queueUrl}
+      RATE_TABLE_NAME: rateTable
     events:
       - httpApi:
           path: /rate
           method: post
   getRateProductMedia:
     handler: src/functions/getRateProductMedia.handler
+    environment:
+      RATE_MEDIA_TABLE_NAME: rateMediaTable
     events:
       - httpApi:
           path: /rate
