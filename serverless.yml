@@ -3,11 +3,12 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs16.x
 
 plugins:
   - serverless-offline
   - serverless-lift
+  - serverless-iam-roles-per-function
 	
 resources:
   Resources:
@@ -16,11 +17,15 @@ resources:
       Properties:
         TableName: rateTable
         AttributeDefinitions:
-          - AttributeName: productName
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
             AttributeType: S
         KeySchema:
-          - AttributeName: productName
+          - AttributeName: pk
             KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -29,11 +34,15 @@ resources:
       Properties:
         TableName: rateMediaTable
         AttributeDefinitions:
-          - AttributeName: productName
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
             AttributeType: S
         KeySchema:
-          - AttributeName: productName
+          - AttributeName: pk
             KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -45,6 +54,12 @@ constructs:
       handler: src/functions/rateMediaCalculator.handler
       environment:
         RATE_MEDIA_TABLE_NAME: rateMediaTable
+      iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+          Resource:
+            - !GetAtt rateMediaTable.Arn
 
 functions:
   rateProduct:
@@ -56,6 +71,13 @@ functions:
       - httpApi:
           path: /rate
           method: post
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource:
+          - !GetAtt rateTable.Arn
   getRateProductMedia:
     handler: src/functions/getRateProductMedia.handler
     environment:
@@ -64,3 +86,9 @@ functions:
       - httpApi:
           path: /rate
           method: get
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource:
+          - !GetAtt rateMediaTable.Arn
