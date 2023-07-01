@@ -1,6 +1,6 @@
 # AWS Ratting Serverless App 
 
-Aplicativo de gerenciamento de revisão de produtos sem servidor totalmente escalável usando as seguintes tecnologias:
+Aplicativo de gerenciamento de avaliações de produtos sem servidor totalmente escalável usando as seguintes tecnologias:
 
 - AWS Lambda
 - AWS DynamoDB
