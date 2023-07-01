@@ -10,6 +10,8 @@ Aplicativo de gerenciamento de revisão de produtos sem servidor totalmente esca
 Este aplicativo é baseado em um estudo de caso criado por mim para aprofundar o uso das tecnologias utilizadas para
 a criação do aplicativo, visando um ambiente escalável, com possibilidade de grande pico de avaliações simultâneas.
 
+<img src="https://github.com/adrian4448/aws-ratting-serverless/blob/master/arquitetura.png?raw=true"/>
+
 # OBS
 
 Como estamos trabalhando em um ambiente de estudo/desenvolvimento, recursos provisionados na AWS como DynamoDB
