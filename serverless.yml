@@ -9,7 +9,7 @@ plugins:
   - serverless-offline
   - serverless-lift
   - serverless-iam-roles-per-function
-	
+
 resources:
   Resources:
     rateTable:
@@ -54,6 +54,7 @@ constructs:
       handler: src/functions/rateMediaCalculator.handler
       environment:
         RATE_MEDIA_TABLE_NAME: rateMediaTable
+      iamRoleStatementsInherit: true
       iamRoleStatements:
         - Effect: "Allow"
           Action:
@@ -86,6 +87,7 @@ functions:
       - httpApi:
           path: /rate
           method: get
+    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
